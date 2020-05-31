@@ -1,9 +1,14 @@
 package com.desafio.banco.userservice.controller;
 
+import com.desafio.banco.userservice.messages.MessageSender;
+import com.desafio.banco.userservice.messages.MessageSource;
 import com.desafio.banco.userservice.model.User;
 import com.desafio.banco.userservice.service.UserService;
+import org.omg.CORBA.BooleanHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.integration.core.MessageProducer;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,9 +25,18 @@ public class UserController {
         return ResponseEntity.ok().body(service.getAll());
     }
 
+    @Autowired
+    private MessageSource source;
+
+    @Autowired
+    private MessageSender producer;
+
     @PostMapping
     public ResponseEntity<User> add(@RequestBody User user) {
-        return ResponseEntity.ok().body(service.add(user));
+        User newUser = service.add(user);
+        boolean messageSent = producer.sendMessage(newUser, source);
+
+        return ResponseEntity.ok().body(newUser);
     }
 
     @GetMapping("{id}")
@@ -39,4 +53,5 @@ public class UserController {
     public ResponseEntity<User> update(@RequestBody User user) {
         return ResponseEntity.ok().body(service.update(user));
     }
+
 }
