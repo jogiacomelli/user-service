@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     public Long delete(User user) {
         repository.delete(user);
 
-        return user.getId();
+        return user.getDocument();
     }
 
     @Override
