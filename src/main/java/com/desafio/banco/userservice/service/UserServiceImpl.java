@@ -1,5 +1,7 @@
 package com.desafio.banco.userservice.service;
 
+import com.desafio.banco.userservice.messages.MessageSender;
+import com.desafio.banco.userservice.messages.MessageSource;
 import com.desafio.banco.userservice.model.User;
 import com.desafio.banco.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private MessageSender producer;
+
+    @Autowired
+    private MessageSource source;
+
     @Override
     public User add(User user) {
-        return repository.save(user);
+        User newUser = repository.save(user);
+        producer.sendMessage(newUser, source);
+
+        return newUser;
     }
 
     @Override

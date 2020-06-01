@@ -4,11 +4,8 @@ import com.desafio.banco.userservice.messages.MessageSender;
 import com.desafio.banco.userservice.messages.MessageSource;
 import com.desafio.banco.userservice.model.User;
 import com.desafio.banco.userservice.service.UserService;
-import org.omg.CORBA.BooleanHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.integration.core.MessageProducer;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +31,6 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> add(@RequestBody User user) {
         User newUser = service.add(user);
-        boolean messageSent = producer.sendMessage(newUser, source);
 
         return ResponseEntity.ok().body(newUser);
     }
